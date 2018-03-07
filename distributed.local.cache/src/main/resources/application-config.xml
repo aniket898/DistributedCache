@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+                           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+    <task:annotation-driven/>
+    <mvc:annotation-driven />
+
+    <context:component-scan base-package="com.aniket.distributed.local.cache" >
+    </context:component-scan>
+
+    <bean id="mapper" class="org.codehaus.jackson.map.ObjectMapper"></bean>
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath:application.properties</value>
+            </list>
+        </property>
+    </bean>
+    <bean name="genericObjectPoolConfig" class="org.apache.commons.pool2.impl.GenericObjectPoolConfig" >
+        <property name="maxWaitMillis" value="${redis.poolconfig.maxWaitMillis}" />
+        <property name="maxTotal" value="${redis.poolconfig.maxTotal}" />
+        <property name="minIdle" value="${redis.poolconfig.minIdle}" />
+        <property name="maxIdle" value="${redis.poolconfig.maxIdle}" />
+    </bean>
+
+    <bean id="jedisCluster" class="com.aniket.distributed.local.cache.utils.JedisClusterFactory">
+        <property name="redisHostsSet" ref="redisHosts" />
+        <property name="timeout" value="${redis.timeout}" />
+        <property name="maxRedirections" value="${redis.maxRedirections}" />
+        <property name="genericObjectPoolConfig" ref="genericObjectPoolConfig" />
+    </bean>
+    <bean name="redisHosts" class="java.util.HashSet">
+        <constructor-arg>
+            <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+                <constructor-arg type="java.lang.String" value="${redis.hosts}"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+</beans>
