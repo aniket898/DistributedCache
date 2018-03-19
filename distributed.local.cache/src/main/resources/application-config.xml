@@ -25,24 +25,4 @@
             </list>
         </property>
     </bean>
-    <bean name="genericObjectPoolConfig" class="org.apache.commons.pool2.impl.GenericObjectPoolConfig" >
-        <property name="maxWaitMillis" value="${redis.poolconfig.maxWaitMillis}" />
-        <property name="maxTotal" value="${redis.poolconfig.maxTotal}" />
-        <property name="minIdle" value="${redis.poolconfig.minIdle}" />
-        <property name="maxIdle" value="${redis.poolconfig.maxIdle}" />
-    </bean>
-
-    <bean id="jedisCluster" class="com.aniket.distributed.local.cache.utils.JedisClusterFactory">
-        <property name="redisHostsSet" ref="redisHosts" />
-        <property name="timeout" value="${redis.timeout}" />
-        <property name="maxRedirections" value="${redis.maxRedirections}" />
-        <property name="genericObjectPoolConfig" ref="genericObjectPoolConfig" />
-    </bean>
-    <bean name="redisHosts" class="java.util.HashSet">
-        <constructor-arg>
-            <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
-                <constructor-arg type="java.lang.String" value="${redis.hosts}"/>
-            </bean>
-        </constructor-arg>
-    </bean>
 </beans>

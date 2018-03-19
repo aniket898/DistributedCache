@@ -22,11 +22,11 @@ public class CacheController {
     @Autowired
     private CacheDataUploadService cacheDataUploadService;
 
-    @RequestMapping(method = RequestMethod.GET, value="/uploadInitialData")
+    @RequestMapping(method = RequestMethod.GET, value="/uploadData")
     @ResponseStatus(HttpStatus.OK)
-    public String uploadData() throws Exception{
+    public void uploadData() throws Exception{
         try{
-            
+            cacheDataUploadService.cacheData();
         } catch (DaoException ex) {
             logger.error("Caught exception while uploading initial data. Exception=" + ex.getMessage());
             throw new Exception(ex.getMessage());
